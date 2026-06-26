@@ -14,12 +14,13 @@
 
 ## Documentation in English
 
-Receipt delivery dispatch library for the **Superkassa** fiscalization system. Supports multiple delivery channels including:
-- Email
-- SMS
-- WhatsApp
-- Telegram
-- Esc/Pos Printing
+### Purpose and Architecture
+This library serves as a **unified multiplatform abstraction layer** for dispatching and delivering fiscal receipts in the **Superkassa** ecosystem. 
+
+Rather than hardcoding platform-specific APIs or protocol logic into the core business applications, this library decouples delivery orchestration from concrete transport channels:
+1. **Core Independence**: The domain and application layers only rely on `DeliveryRequest` and `DeliveryService`.
+2. **Pluggable Architecture**: Concrete delivery implementations (e.g., HTTP APIs, Android Bluetooth printing, SMTP/SMS gateway integrations) are built on top of the `DeliveryAdapter` interface and passed dynamically at runtime.
+3. **Multiplatform Compatibility**: Written in pure Kotlin, it is fully compatible with Kotlin JVM (Server), Kotlin JS (Web), and Kotlin Native/Android runtimes.
 
 ---
 
@@ -65,11 +66,13 @@ if (result.ok) {
 
 ## Документация на русском языке
 
-Библиотека отправки и доставки фискальных чеков для системы фискализации **Superkassa**. Поддерживает различные каналы доставки:
-- Электронная почта (Email)
-- SMS-сообщения
-- Сообщения в мессенджеры WhatsApp и Telegram
-- Локальная печать (Esc/Pos)
+### Назначение и архитектура
+Данная библиотека является **унифицированным мультиплатформенным слоем абстракции** для отправки и доставки фискальных чеков в экосистеме **Superkassa**.
+
+Вместо того чтобы жестко привязывать бизнес-логику к конкретным API платформ или протоколам, библиотека изолирует процесс оркестрации доставки:
+1. **Независимость ядра**: Доменный и прикладной слои приложения взаимодействуют исключительно с сущностями `DeliveryRequest` и сервисом `DeliveryService`.
+2. **Расширяемая архитектура (Pluggable)**: Конкретные интеграции (HTTP-клиенты, печать через Bluetooth на Android, шлюзы почты/SMS) реализуют интерфейс `DeliveryAdapter` и подключаются динамически в рантайме.
+3. **Кроссплатформенность**: Библиотека написана на чистом Kotlin, совместима с JVM (серверные приложения), JS (веб-клиенты) и Native/Android средами выполнения.
 
 ---
 
