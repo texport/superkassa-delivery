@@ -1,10 +1,19 @@
 plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.jvm)
+    id("maven-publish")
 }
 
 group = "kz.mybrain"
 version = "1.0"
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+        }
+    }
+}
 
 repositories {
     mavenLocal()
