@@ -7,6 +7,11 @@ build/
 *.iml
 *.ipr
 *.iws
+out/
+
+# Operating System files
+.DS_Store
+Thumbs.db
 
 # Android local configs
 local.properties

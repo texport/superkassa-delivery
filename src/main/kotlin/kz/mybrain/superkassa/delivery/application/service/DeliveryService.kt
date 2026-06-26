@@ -16,7 +16,12 @@ class DeliveryService(
 
     fun deliver(request: DeliveryRequest): DeliveryResult {
         val adapter = adapterByChannel[request.channel]
-            ?: return DeliveryResult(false, "No adapter for channel ${request.channel}")
+            ?: return DeliveryResult(
+                false,
+                "[EN] No adapter for channel ${request.channel} / " +
+                    "[RU] Нет адаптера для канала ${request.channel} / " +
+                    "[KK] ${request.channel} арнасы үшін адаптер жоқ"
+            )
         logger.info("Delivery start. channel={}, documentId={}", request.channel, request.documentId)
         val result = adapter.send(request)
         if (result.ok) {

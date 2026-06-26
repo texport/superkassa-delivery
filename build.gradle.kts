@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.jvm)
-    id("maven-publish")
+    `maven-publish`
+    jacoco
 }
 
 group = "kz.mybrain"
-version = "1.0"
+version = libs.versions.superkassaDelivery.get()
 
 publishing {
     publications {
@@ -23,18 +24,49 @@ repositories {
 dependencies {
     implementation(libs.slf4j.api)
     testImplementation(kotlin("test"))
+    detektPlugins(libs.detekt.formatting)
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.98".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestCoverageVerification)
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(libs.versions.java.get().toInt())
 }
+
 
 detekt {
     config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
     allRules = true
+    autoCorrect = true
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    jvmTarget = "17"
+    jvmTarget = libs.versions.java.get()
 }
+
