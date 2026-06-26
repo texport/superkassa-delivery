@@ -1,9 +1,9 @@
-package kz.mybrain.superkassa.delivery.application.service
+package io.github.texport.superkassa.delivery.application.service
 
-import kz.mybrain.superkassa.delivery.domain.model.DeliveryChannel
-import kz.mybrain.superkassa.delivery.domain.model.DeliveryRequest
-import kz.mybrain.superkassa.delivery.domain.model.DeliveryResult
-import kz.mybrain.superkassa.delivery.domain.port.DeliveryAdapter
+import io.github.texport.superkassa.delivery.domain.model.DeliveryChannel
+import io.github.texport.superkassa.delivery.domain.model.DeliveryRequest
+import io.github.texport.superkassa.delivery.domain.model.DeliveryResult
+import io.github.texport.superkassa.delivery.domain.port.DeliveryAdapter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

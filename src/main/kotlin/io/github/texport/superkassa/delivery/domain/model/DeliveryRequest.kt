@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.delivery.domain.model
+package io.github.texport.superkassa.delivery.domain.model
 
 /**
  * Запрос на доставку.

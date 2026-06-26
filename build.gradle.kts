@@ -5,7 +5,7 @@ plugins {
     jacoco
 }
 
-group = "kz.mybrain"
+group = "io.github.texport"
 version = libs.versions.superkassaDelivery.get()
 
 publishing {

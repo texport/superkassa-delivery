@@ -1,6 +1,6 @@
 # superkassa-delivery
 
-[![Maven Central](https://img.shields.io/maven-central/v/kz.mybrain/superkassa-delivery.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/kz.mybrain/superkassa-delivery)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.texport/superkassa-delivery.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.texport/superkassa-delivery)
 [![Version](https://img.shields.io/badge/Version-1.0-blue.svg)]()
 [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -30,7 +30,7 @@ Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("kz.mybrain:superkassa-delivery:1.0")
+    implementation("io.github.texport:superkassa-delivery:1.0")
 }
 ```
 
@@ -39,9 +39,9 @@ dependencies {
 ### Usage Example
 
 ```kotlin
-import kz.mybrain.superkassa.delivery.application.service.DeliveryService
-import kz.mybrain.superkassa.delivery.domain.model.DeliveryChannel
-import kz.mybrain.superkassa.delivery.domain.model.DeliveryRequest
+import io.github.texport.superkassa.delivery.application.service.DeliveryService
+import io.github.texport.superkassa.delivery.domain.model.DeliveryChannel
+import io.github.texport.superkassa.delivery.domain.model.DeliveryRequest
 
 // Initialize service with channel adapters
 val deliveryService = DeliveryService(listOf(emailAdapter, telegramAdapter))
@@ -82,7 +82,7 @@ if (result.ok) {
 
 ```kotlin
 dependencies {
-    implementation("kz.mybrain:superkassa-delivery:1.0")
+    implementation("io.github.texport:superkassa-delivery:1.0")
 }
 ```
 
@@ -91,9 +91,9 @@ dependencies {
 ### Пример использования
 
 ```kotlin
-import kz.mybrain.superkassa.delivery.application.service.DeliveryService
-import kz.mybrain.superkassa.delivery.domain.model.DeliveryChannel
-import kz.mybrain.superkassa.delivery.domain.model.DeliveryRequest
+import io.github.texport.superkassa.delivery.application.service.DeliveryService
+import io.github.texport.superkassa.delivery.domain.model.DeliveryChannel
+import io.github.texport.superkassa.delivery.domain.model.DeliveryRequest
 
 // Инициализация сервиса со списком адаптеров
 val deliveryService = DeliveryService(listOf(emailAdapter, telegramAdapter))
