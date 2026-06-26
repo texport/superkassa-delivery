@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/Version-1.0-blue.svg)]()
 [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![CI Build](https://github.com/texport/superkassa-delivery/actions/workflows/ci.yml/badge.svg)](https://github.com/texport/superkassa-delivery/actions)
+[![CI Build](https://img.shields.io/github/actions/workflow/status/texport/superkassa-delivery/ci.yml?branch=main&label=CI%20Build)](https://github.com/texport/superkassa-delivery/actions)
 
 ---
 
