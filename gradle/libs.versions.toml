@@ -5,6 +5,7 @@ detekt = "1.23.8"
 jacoco = "0.8.12"
 java = "17"
 superkassaDelivery = "1.0"
+nmcp = "1.5.0"
 
 [libraries]
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
@@ -13,4 +14,6 @@ detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-form
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+nmcp = { id = "com.gradleup.nmcp", version.ref = "nmcp" }
+
 
