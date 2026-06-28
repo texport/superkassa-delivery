@@ -6,13 +6,9 @@ import io.github.texport.superkassa.delivery.domain.port.DeliveryAdapter
 import io.github.texport.superkassa.delivery.logging.getLogger
 
 /**
- * Service for delivering fiscal documents (receipts, reports) via configured communication channels (e.g. Email, SMS).
- *
  * Сервис для отправки фискальных документов (чеков, отчетов) через настроенные каналы доставки (например, Email, SMS).
  *
- * Фискалдық құжаттарды (чектерді, есептерді) теңшелген жеткізу арналары (мысалы, Email, SMS) арқылы жеткізу қызметі.
- *
- * @property adapters The list of delivery adapters representing active communication channels.
+ * @property adapters Список адаптеров доставки, представляющих активные каналы связи.
  */
 class DeliveryService(
     adapters: List<DeliveryAdapter>
