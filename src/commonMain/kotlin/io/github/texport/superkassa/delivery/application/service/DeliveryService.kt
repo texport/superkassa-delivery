@@ -3,7 +3,7 @@ package io.github.texport.superkassa.delivery.application.service
 import io.github.texport.superkassa.delivery.domain.model.DeliveryRequest
 import io.github.texport.superkassa.delivery.domain.model.DeliveryResult
 import io.github.texport.superkassa.delivery.domain.port.DeliveryAdapter
-import org.slf4j.LoggerFactory
+import io.github.texport.superkassa.delivery.logging.getLogger
 
 /**
  * Сервис доставки чеков.
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 class DeliveryService(
     adapters: List<DeliveryAdapter>
 ) {
-    private val logger = LoggerFactory.getLogger(DeliveryService::class.java)
+    private val logger = getLogger(DeliveryService::class)
     private val adapterByChannel = adapters.associateBy { it.channel }
 
     fun deliver(request: DeliveryRequest): DeliveryResult {

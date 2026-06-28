@@ -24,9 +24,7 @@ data class DeliveryRequest(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as DeliveryRequest
+        if (other == null || other !is DeliveryRequest) return false
 
         if (cashboxId != other.cashboxId) return false
         if (documentId != other.documentId) return false

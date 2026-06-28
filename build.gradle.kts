@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.detekt)
-    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.nmcp)
+    alias(libs.plugins.kotlin.multiplatform)
     `maven-publish`
     signing
     jacoco
@@ -10,50 +10,65 @@ plugins {
 group = "io.github.texport"
 version = libs.versions.superkassaDelivery.get()
 
-val sourcesJar = tasks.register<Jar>("sourcesJar") {
-    description = "Generates the sources JAR artifact"
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
+repositories {
+    mavenLocal()
+    mavenCentral()
 }
 
-val javadocJar = tasks.register<Jar>("javadocJar") {
-    description = "Generates the javadoc JAR artifact"
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc)
+kotlin {
+    jvm()
+    
+    iosArm64()
+    iosX64()
+    iosSimulatorArm64()
+
+    jvmToolchain(libs.versions.java.get().toInt())
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                // Pure Kotlin common code
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation(libs.slf4j.api)
+            }
+        }
+    }
 }
 
 publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            artifact(sourcesJar)
-            artifact(javadocJar)
+    publications.withType<MavenPublication>().configureEach {
+        pom {
+            name.set("superkassa-delivery")
+            description.set("Unified delivery dispatcher abstraction for Superkassa fiscal receipts")
+            url.set("https://github.com/texport/superkassa-delivery")
 
-            pom {
-                name.set("superkassa-delivery")
-                description.set("Unified delivery dispatcher abstraction for Superkassa fiscal receipts")
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+
+            developers {
+                developer {
+                    id.set("sergeyivanov")
+                    name.set("Sergey Ivanov")
+                    email.set("ivanov.sergey.ekb@gmail.com")
+                }
+            }
+
+            scm {
+                connection.set("scm:git:git://github.com/texport/superkassa-delivery.git")
+                developerConnection.set("scm:git:ssh://github.com/texport/superkassa-delivery.git")
                 url.set("https://github.com/texport/superkassa-delivery")
-
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("sergeyivanov")
-                        name.set("Sergey Ivanov")
-                        email.set("ivanov.sergey.ekb@gmail.com")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://github.com/texport/superkassa-delivery.git")
-                    developerConnection.set("scm:git:ssh://github.com/texport/superkassa-delivery.git")
-                    url.set("https://github.com/texport/superkassa-delivery")
-                }
             }
         }
     }
@@ -65,7 +80,7 @@ signing {
     if (!signingKey.isNullOrEmpty() && !signingPassword.isNullOrEmpty()) {
         useInMemoryPgpKeys(signingKey, signingPassword)
     }
-    sign(publishing.publications["mavenJava"])
+    sign(publishing.publications)
 }
 
 nmcp {
@@ -76,31 +91,25 @@ nmcp {
     }
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-dependencies {
-    implementation(libs.slf4j.api)
-    testImplementation(kotlin("test"))
-    detektPlugins(libs.detekt.formatting)
-}
-
 jacoco {
     toolVersion = libs.versions.jacoco.get()
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
+val jacocoTestReport = tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("jvmTest"))
+    classDirectories.setFrom(files(tasks.named("compileKotlinJvm")))
+    sourceDirectories.setFrom(files("src/commonMain/kotlin", "src/jvmMain/kotlin"))
+    executionData.setFrom(files(layout.buildDirectory.file("jacoco/jvmTest.exec")))
     reports {
         xml.required.set(true)
         html.required.set(true)
     }
 }
 
-tasks.jacocoTestCoverageVerification {
-    dependsOn(tasks.jacocoTestReport)
+val jacocoTestCoverageVerification = tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    dependsOn(jacocoTestReport)
+    executionData.setFrom(files(layout.buildDirectory.file("jacoco/jvmTest.exec")))
+    classDirectories.setFrom(files(tasks.named("compileKotlinJvm")))
     violationRules {
         rule {
             limit {
@@ -111,13 +120,8 @@ tasks.jacocoTestCoverageVerification {
 }
 
 tasks.check {
-    dependsOn(tasks.jacocoTestCoverageVerification)
+    dependsOn(jacocoTestCoverageVerification)
 }
-
-kotlin {
-    jvmToolchain(libs.versions.java.get().toInt())
-}
-
 
 detekt {
     config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
@@ -130,3 +134,6 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     jvmTarget = libs.versions.java.get()
 }
 
+dependencies {
+    detektPlugins(libs.detekt.formatting)
+}
