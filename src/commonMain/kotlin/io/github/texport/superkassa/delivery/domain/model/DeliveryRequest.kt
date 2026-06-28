@@ -1,10 +1,18 @@
 package io.github.texport.superkassa.delivery.domain.model
 
 /**
- * Запрос на доставку.
+ * Delivery request data container representing a request to dispatch a document.
  *
- * @param payloadUrl URL чека (при payloadType=LINK).
- * @param payloadBytes Документ в бинарном виде (PDF/IMAGE/HTML/ESC_POS). Один из payloadUrl или payloadBytes должен быть задан.
+ * Запрос на доставку, содержащий данные для отправки документа.
+ *
+ * Құжатты жіберуге арналған деректерді қамтитын жеткізу сұранысы.
+ *
+ * @property cashboxId Target cashbox identifier.
+ * @property documentId Document identifier to be dispatched.
+ * @property channel Target delivery communication channel.
+ * @property destination Target receiver address (e.g. Email address or Phone number).
+ * @property payloadUrl URL of the document (used if payloadType=LINK).
+ * @property payloadBytes Binary representation of the document (PDF/IMAGE/HTML/ESC_POS).
  */
 data class DeliveryRequest(
     val cashboxId: String,

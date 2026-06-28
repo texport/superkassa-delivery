@@ -1,17 +1,15 @@
-# Gradle files
-.gradle/
+.gradle
 build/
-
-# IDE files
+.kotlin
 .idea/
 *.iml
 *.ipr
 *.iws
 out/
-
-# Operating System files
 .DS_Store
 Thumbs.db
-
-# Android local configs
 local.properties
+*.log
+.DS_Store?
+ehthumbs.db
+Icon?
