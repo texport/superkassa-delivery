@@ -1,8 +1,8 @@
 # superkassa-delivery
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.texport/superkassa-delivery.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.texport/superkassa-delivery)
-[![Version](https://img.shields.io/badge/Version-1.0-blue.svg)]()
-[![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)]()
+[![Version](https://img.shields.io/badge/Version-1.1.0-blue.svg)](https://github.com/texport/superkassa-delivery/releases)
+[![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](https://github.com/texport/superkassa-delivery/actions)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![CI Build](https://img.shields.io/github/actions/workflow/status/texport/superkassa-delivery/ci.yml?branch=main&label=CI%20Build)](https://github.com/texport/superkassa-delivery/actions)
 
@@ -24,15 +24,26 @@ Rather than hardcoding platform-specific APIs or protocol logic into the core bu
 
 ---
 
-### Installation
-
-Add the dependency to your `build.gradle.kts`:
+#### Kotlin Multiplatform & Android
+Add the dependency to your shared `commonMain` source set inside `build.gradle.kts`:
 
 ```kotlin
-dependencies {
-    implementation("io.github.texport:superkassa-delivery:1.0")
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("io.github.texport:superkassa-delivery:1.1.0")
+            }
+        }
+    }
 }
 ```
+
+#### Apple Swift Package Manager (SPM)
+You can integrate this library directly into your iOS project using Xcode's Swift Package Manager:
+1. In Xcode, select **File ➔ Add Package Dependencies...**
+2. Enter the repository URL: `https://github.com/texport/superkassa-delivery.git`
+3. Set the version rules to **Up to Next Major** starting with `1.1.0`.
 
 ---
 
@@ -76,15 +87,26 @@ if (result.ok) {
 
 ---
 
-### Установка
-
-Добавьте зависимость в ваш `build.gradle.kts`:
+#### В Kotlin Multiplatform и Android
+Добавьте зависимость в ваш общий набор исходников `commonMain` в `build.gradle.kts`:
 
 ```kotlin
-dependencies {
-    implementation("io.github.texport:superkassa-delivery:1.0")
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("io.github.texport:superkassa-delivery:1.1.0")
+            }
+        }
+    }
 }
 ```
+
+#### В Apple iOS проектах (через SPM)
+Вы можете подключить библиотеку непосредственно в iOS приложение с помощью Swift Package Manager в Xcode:
+1. Выберите в Xcode: **File ➔ Add Package Dependencies...**
+2. Введите URL репозитория: `https://github.com/texport/superkassa-delivery.git`
+3. Установите правило версии **Up to Next Major** начиная с `1.1.0`.
 
 ---
 
