@@ -1,3 +1,9 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import java.security.MessageDigest
+import java.io.FileInputStream
+import java.util.zip.ZipOutputStream
+import java.util.zip.ZipEntry
+
 plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.nmcp)
@@ -18,9 +24,13 @@ repositories {
 kotlin {
     jvm()
     
-    iosArm64()
-    iosX64()
-    iosSimulatorArm64()
+    val xcf = XCFramework("SuperkassaDelivery")
+    listOf(iosArm64(), iosX64(), iosSimulatorArm64()).forEach { target ->
+        target.binaries.framework {
+            baseName = "SuperkassaDelivery"
+            xcf.add(this)
+        }
+    }
 
     jvmToolchain(libs.versions.java.get().toInt())
 
@@ -55,6 +65,12 @@ kotlin {
 
 publishing {
     publications.withType<MavenPublication>().configureEach {
+        val javadocJarTask = tasks.register<Jar>("${name}JavadocJar") {
+            description = "Generates Javadoc jar for publication ${this@configureEach.name}"
+            archiveClassifier.set("javadoc")
+            archiveAppendix.set(this@configureEach.name)
+        }
+        artifact(javadocJarTask)
         pom {
             name.set("superkassa-delivery")
             description.set("Unified delivery dispatcher abstraction for Superkassa fiscal receipts")
@@ -90,6 +106,7 @@ signing {
     if (!signingKey.isNullOrEmpty() && !signingPassword.isNullOrEmpty()) {
         useInMemoryPgpKeys(signingKey, signingPassword)
     }
+    isRequired = false
     sign(publishing.publications)
 }
 
@@ -149,4 +166,86 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 
 dependencies {
     detektPlugins(libs.detekt.formatting)
+}
+
+tasks.register("generateSpmManifest") {
+    group = "publishing"
+    description = "Zips SuperkassaDelivery XCFramework, calculates SHA-256 and writes Package.swift"
+    dependsOn("assembleSuperkassaDeliveryReleaseXCFramework")
+
+    doLast {
+        val versionStr = project.version.toString()
+        val repoUrl = "https://github.com/texport/superkassa-delivery"
+        val zipName = "SuperkassaDelivery.xcframework.zip"
+        val outputDir = layout.buildDirectory.dir("XCFrameworks/release").get().asFile
+        val xcframeworkDir = File(outputDir, "SuperkassaDelivery.xcframework")
+        val zipFile = File(outputDir, zipName)
+
+        if (!xcframeworkDir.exists()) {
+            throw GradleException("XCFramework not found at ${xcframeworkDir.absolutePath}")
+        }
+
+        // 1. Zipping XCFramework
+        println("Zipping XCFramework to ${zipFile.absolutePath}...")
+        zipFile.delete()
+        ZipOutputStream(zipFile.outputStream().buffered()).use { zos ->
+            xcframeworkDir.walkTopDown().forEach { file ->
+                if (file.isFile) {
+                    val relativePath = file.relativeTo(xcframeworkDir.parentFile).path
+                    zos.putNextEntry(ZipEntry(relativePath))
+                    file.inputStream().buffered().use { input ->
+                        input.copyTo(zos)
+                    }
+                    zos.closeEntry()
+                }
+            }
+        }
+
+        // 2. Compute SHA-256
+        println("Computing SHA-256 checksum...")
+        val digest = MessageDigest.getInstance("SHA-256")
+        FileInputStream(zipFile).use { fis ->
+            val buffer = ByteArray(8192)
+            var bytesRead = fis.read(buffer)
+            while (bytesRead != -1) {
+                digest.update(buffer, 0, bytesRead)
+                bytesRead = fis.read(buffer)
+            }
+        }
+        val checksumBytes = digest.digest()
+        val checksum = checksumBytes.joinToString("") { "%02x".format(it) }
+        println("SHA-256: $checksum")
+
+        // 3. Write Package.swift
+        val packageSwiftFile = rootProject.file("Package.swift")
+        println("Writing Package.swift to ${packageSwiftFile.absolutePath}...")
+        packageSwiftFile.writeText(
+            """
+            // swift-tools-version:5.5
+            import PackageDescription
+
+            let package = Package(
+                name: "SuperkassaDelivery",
+                platforms: [
+                    .iOS(.v15)
+                ],
+                products: [
+                    .library(
+                        name: "SuperkassaDelivery",
+                        targets: ["SuperkassaDelivery"]
+                    ),
+                ],
+                dependencies: [],
+                targets: [
+                    .binaryTarget(
+                        name: "SuperkassaDelivery",
+                        url: "$repoUrl/releases/download/v$versionStr/$zipName",
+                        checksum: "$checksum"
+                    )
+                ]
+            )
+            """.trimIndent() + "\n"
+        )
+        println("SPM manifest generation complete for version $versionStr!")
+    }
 }
